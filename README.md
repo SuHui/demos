@@ -2,21 +2,12 @@
 
 https://github.com/defunkt/jquery-pjax/
 
-## 使用说明
+## 优点
 
-## pjax = pushState + ajax
+不刷新加载新内容，同时地址栏发生变化，支持前进后退操作
+pjax = pushState + ajax
 
-pjax is a jQuery plugin that uses ajax and pushState to deliver a fast browsing experience with real permalinks, page titles, and a working back button.
-
-pjax works by grabbing html from your server via ajax and replacing the content of a container on your page with the ajax'd html. It then updates the browser's current url using pushState without reloading your page's layout or any resources (js, css), giving the appearance of a fast, full page load. But really it's just ajax and pushState.
-
-For [browsers that don't support pushState][compat] pjax fully degrades.
-
-## Overview
-
-pjax is not fully automatic. You'll need to setup and designate a containing element on your page that will be replaced when you navigate your site.
-
-Consider the following page.
+## 用法
 
 ``` html
 <!DOCTYPE html>
@@ -33,93 +24,20 @@ Consider the following page.
 </html>
 ```
 
-We want pjax to grab the url `/page/2` then replace `#pjax-container` with whatever it gets back. No styles or scripts will be reloaded and even the h1 can stay the same - we just want to change the `#pjax-container` element.
-
-We do this by telling pjax to listen on `a` tags and use `#pjax-container` as the target container:
-
 ``` javascript
 $(document).pjax('a', '#pjax-container')
 ```
+从/page/2取得数据，填充在#pajx-container
 
-Now when someone in a pjax-compatible browser clicks "next page" the content of `#pjax-container` will be replaced with the body of `/page/2`.
+pjax发送的网络请求中会带有 `X-PJAX` header.
 
-Magic! Almost. You still need to configure your server to look for pjax requests and send back pjax-specific content.
-
-The pjax ajax request sends an `X-PJAX` header so in this example (and in most cases) we want to return just the content of the page without any layout for any requests with that header.
-
-Here's what it might look like in Rails:
-
-``` ruby
-def index
-  if request.headers['X-PJAX']
-    render :layout => false
-  end
-end
-```
-
-If you'd like a more automatic solution than pjax for Rails check out [Turbolinks](https://github.com/rails/turbolinks).
-
-Also check out [RailsCasts #294 : Playing with PJAX](http://railscasts.com/episodes/294-playing-with-pjax)
-
-## Installation
-
-### bower
-
-Via [bower](https://github.com/twitter/bower).
-
-```
-$ bower install jquery-pjax
-```
-
-Or add `jquery-pjax` to your apps `bower.json`.
-
-``` json
-  "dependencies": {
-    "jquery-pjax": "latest"
-  }
-```
-
-### standalone
-
-pjax can be downloaded directly into your app's public directory - just be sure you've loaded jQuery first.
-
-```
-curl -LO https://raw.github.com/defunkt/jquery-pjax/master/jquery.pjax.js
-```
-
-**WARNING** Do not hotlink the raw script url. GitHub is not a CDN.
-
-## Dependencies
-
-Requires jQuery 1.8.x or higher.
-
-## Compatibility
+## 兼容性
 
 pjax only works with [browsers that support the `history.pushState` API][compat]. When the API isn't supported pjax goes into fallback mode: `$.fn.pjax` calls will be a no-op and `$.pjax` will hard load the given url. This mode targets the browser requirements of the jQuery version being used.
 
 For debugging purposes, you can intentionally disable pjax even if the browser supports `pushState`. Just call `$.pjax.disable()`. To see if pjax is actually supports `pushState`, check `$.support.pjax`.
 
-## Usage
-
-### `$.fn.pjax`
-
-Let's talk more about the most basic way to get started:
-
-``` javascript
-$(document).pjax('a', '#pjax-container')
-```
-
-This will enable pjax on all links and designate the container as `#pjax-container`.
-
-If you are migrating an existing site you probably don't want to enable pjax everywhere just yet. Instead of using a global selector like `a` try annotating pjaxable links with `data-pjax`, then use `'a[data-pjax]'` as your selector.
-
-Or try this selector that matches any `<a data-pjax href=>` links inside a `<div data-pjax>` container.
-
-``` javascript
-$(document).pjax('[data-pjax] a, a[data-pjax]', '#pjax-container')
-```
-
-#### Arguments
+#### 参数
 
 The synopsis for the `$.fn.pjax` function is:
 
@@ -401,26 +319,3 @@ $(document).on('click', 'a[data-pjax]', function(event) {
 
 **NOTE** The new api gives you control over the delegated element container. `$.fn.live` always bound to `document`. This is what you still want to do most of the time.
 
-## Contributing
-
-```
-$ git clone https://github.com/defunkt/jquery-pjax.git
-$ cd jquery-pjax/
-```
-
-To run the test suite locally, start up the Sinatra test application.
-
-```
-$ bundle install
-$ bundle exec ruby test/app.rb
-== Sinatra/1.4.5 has taken the stage on 4567 for development with backup from WEBrick
-
-# in another tab:
-$ open http://localhost:4567/
-```
-
-[compat]: http://caniuse.com/#search=pushstate
-[gist]: https://gist.github.com/
-[$.fn.on]: http://api.jquery.com/on/
-[$.ajax]: http://api.jquery.com/jQuery.ajax/
-[pushState]: https://developer.mozilla.org/en-US/docs/Web/Guide/API/DOM/Manipulating_the_browser_history#Adding_and_modifying_history_entries

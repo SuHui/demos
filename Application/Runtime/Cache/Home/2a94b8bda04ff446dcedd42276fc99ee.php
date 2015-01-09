@@ -1,6 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit();?>
-<!DOCTYPE html>
-<html lang="zh-cn" class="app">
+<?php if (!defined('THINK_PATH')) exit();?><html>
 <head>  
   <meta charset="utf-8" />
 </head>
